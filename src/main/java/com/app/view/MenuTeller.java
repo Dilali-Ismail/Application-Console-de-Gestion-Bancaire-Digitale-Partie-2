@@ -8,6 +8,7 @@ import main.java.com.app.models.Client;
 import main.java.com.app.models.enums.AccountType;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Scanner;
 
 public class MenuTeller {
@@ -41,7 +42,8 @@ public class MenuTeller {
             switch (choice) {
                 case "1": createClient(); break;
                 case "2": listClients(); break;
-                case "3" : creerClient();break;
+                case "3" : creerAccount();break;
+                case "4": ListeclientAccounts(); break;
                 case "5": logout(); return;
                 default: System.out.println("Choix invalide");
             }
@@ -99,7 +101,7 @@ public class MenuTeller {
         System.out.println("Déconnecté");
     }
 
-    private void creerClient(){
+    private void creerAccount(){
         System.out.println("*** CRÉATION D'UN COMPTE BANCAIRE ***");
         try{
             System.out.println("Id de client");
@@ -145,5 +147,32 @@ public class MenuTeller {
         }
     }
 
+    private void ListeclientAccounts(){
+        System.out.println("**COMPTES D'UN CLIENT***");
+        try {
+            System.out.println("Id de client :");
+            Long clientId = Long.parseLong(scanner.nextLine());
+            List<Account> accounts = accountController.getClientsAccounts(clientId);
+            if (accounts.isEmpty()) {
+                System.out.println("Aucun compte pour ce client");
+            }
+            System.out.println("\n Comptes du client " + clientId + " :");
+            System.out.println("-".repeat(80));
+            System.out.printf("%-15s %-12s %-10s %-12s %-10s%n",
+                    "NUMÉRO", "TYPE", "SOLDE", "DEVISE", "STATUT");
+            System.out.println("-".repeat(80));
+            for (Account account : accounts) {
+                System.out.printf("%-15s %-12s %-10.2f %-12s %-10s%n",
+                        account.getAccountNumber(),
+                        account.getAccountType(),
+                        account.getBalance(),
+                        account.getCurrency(),
+                        account.getStatus());
+            }
+            System.out.println("-".repeat(80));
+        }catch(Exception e){
+            System.out.println("Erreur : " + e.getMessage());
+        }
+    }
 
 }
