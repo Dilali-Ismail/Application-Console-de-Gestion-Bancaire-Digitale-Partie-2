@@ -44,6 +44,31 @@ public class TransactionService {
         }
         return savedTransaction;
     }
+
+    public Transaction withdraw(String accountnumber ,BigDecimal amount) {
+        Account account = accountRepository.findByAccountNumber(accountnumber)
+                .orElseThrow(() -> new RuntimeException("Compte non trouvé : " + accountnumber));
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Erreur mise à jour du solde");
+        }
+        Transaction savedTransaction = null;
+        if (account.getBalance().compareTo(amount) > 0) {
+            BigDecimal newbalaance = account.getBalance().subtract(amount);
+            account.setBalance(newbalaance);
+            Account updatedAccount = accountRepository.update(account);
+            if (updatedAccount == null) {
+                throw new RuntimeException("Erreur mise à jour du solde");
+            }
+            Transaction transaction = new Transaction(account.getId(), TransactionType.WITHDRAWAL, amount);
+            savedTransaction = transactionRepository.save(transaction);
+            if (savedTransaction == null) {
+                throw new RuntimeException("Erreur création de la transaction");
+            }
+
+           }
+        return savedTransaction;
+    }
+
     public BigDecimal getAccountBalance(String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new RuntimeException("Compte non trouvé : " + accountNumber));

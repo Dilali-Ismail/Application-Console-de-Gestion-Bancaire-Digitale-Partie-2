@@ -39,7 +39,8 @@ public class MenuTeller {
             System.out.println("4 - Lister les aacounts d'un Client");
             System.out.println("===== transaction ====");
             System.out.println("5. Dépôt");
-            System.out.println("6. Déconnexion");
+            System.out.println("6. Withdraw");
+            System.out.println("7. Déconnexion");
             System.out.print("Choix : ");
 
             String choice = scanner.nextLine();
@@ -50,7 +51,8 @@ public class MenuTeller {
                 case "3" : creerAccount();break;
                 case "4": ListeclientAccounts(); break;
                 case "5": deposit(); break;
-                case "6": logout(); return;
+                case "6": withdraw(); break;
+                case "7": logout(); return;
                 default: System.out.println("Choix invalide");
             }
         }
@@ -197,4 +199,21 @@ public class MenuTeller {
                 System.out.println(" Erreur : " + e.getMessage());
             }
         }
+
+    private void withdraw(){
+        System.out.println("--- withdraw ---");
+        try {
+            System.out.print("Numero de compte : ");
+            String accountNumber = scanner.nextLine();
+            System.out.print("Montant a Withdrawing : ");
+            BigDecimal amount = new BigDecimal(scanner.nextLine());
+            transactionController.withdraw(accountNumber, amount);
+            BigDecimal newBalance = transactionController.getAccountBalance(accountNumber);
+            System.out.println(" Withdraw réussi !");
+            System.out.println("Nouveau solde : " + newBalance + " MAD");
+
+        }  catch (Exception e) {
+            System.out.println(" Erreur : " + e.getMessage());
+        }
+    }
 }
