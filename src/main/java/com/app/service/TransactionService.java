@@ -23,7 +23,7 @@ public class TransactionService {
 
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new RuntimeException("Compte non trouvé : " + accountNumber));
-
+       if(account.getAccountType().equals())
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Le montant doit être positif");
         }
@@ -67,6 +67,35 @@ public class TransactionService {
 
            }
         return savedTransaction;
+    }
+
+    public void transfer(String accounnumberOut , String accountnumberIn , BigDecimal amount){
+        Account accountOut = accountRepository.findByAccountNumber(accounnumberOut)
+                .orElseThrow(() -> new RuntimeException("Compte non trouvé : " + accounnumberOut));
+        Account accountIn = accountRepository.findByAccountNumber(accountnumberIn)
+                .orElseThrow(() -> new RuntimeException("Compte non trouvé : " + accountnumberIn));
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Erreur mise à jour du solde");
+        }
+        if(accountOut.getBalance().compareTo(amount) < 0){
+            throw new RuntimeException("Solde insuffisant pour le transfert");
+        }
+
+        accountOut.setBalance(accountOut.getBalance().subtract(amount));
+        accountIn.setBalance(accountIn.getBalance().subtract(amount));
+        //update
+        Account updatedAccountOut = accountRepository.update(accountOut);
+        Account updatedAccountIn = accountRepository.update(accountIn);
+
+        if (updatedAccountOut == null || updatedAccountIn == null) {
+            throw new RuntimeException("Erreur mise à jour du solde");
+        }
+
+        Transaction transactionOut = new Transaction(accountOut.getId(), TransactionType.TRANSFER_OUT, amount);
+        Transaction transactionIn = new Transaction(accountIn.getId(), TransactionType.TRANSFER_IN, amount);
+
+        transactionRepository.save(transactionOut);
+        transactionRepository.save(transactionIn);
     }
 
     public BigDecimal getAccountBalance(String accountNumber) {

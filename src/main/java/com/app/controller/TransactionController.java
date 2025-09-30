@@ -30,6 +30,19 @@ public class TransactionController {
         }
         transactionService.withdraw(accountNumber.trim(), amount);
     }
+
+    public void transfer(String fromAccountNumber , String toAccountNumber , BigDecimal amount){
+        if (fromAccountNumber == null || fromAccountNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("Numéro de compte source requis");
+        }
+        if (toAccountNumber == null || toAccountNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("Numéro de compte destination requis");
+        }
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Montant doit être positif");
+        }
+        transactionService.transfer(fromAccountNumber.trim(), toAccountNumber.trim(), amount);
+    }
     public BigDecimal getAccountBalance(String accountNumber) {
         return transactionService.getAccountBalance(accountNumber);
     }

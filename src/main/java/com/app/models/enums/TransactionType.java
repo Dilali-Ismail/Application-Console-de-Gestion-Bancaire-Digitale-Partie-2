@@ -3,5 +3,6 @@ package main.java.com.app.models.enums;
 public enum TransactionType {
     DEPOSIT,
     WITHDRAWAL,
-    TRANSFER
+    TRANSFER_OUT,  // ← AJOUT
+    TRANSFER_IN
 }

@@ -9,6 +9,7 @@ import main.java.com.app.models.Client;
 import main.java.com.app.models.enums.AccountType;
 
 import java.math.BigDecimal;
+import java.security.PrivateKey;
 import java.util.List;
 import java.util.Scanner;
 
@@ -40,7 +41,8 @@ public class MenuTeller {
             System.out.println("===== transaction ====");
             System.out.println("5. Dépôt");
             System.out.println("6. Withdraw");
-            System.out.println("7. Déconnexion");
+            System.out.println("7. transfer");
+            System.out.println("8. Déconnexion");
             System.out.print("Choix : ");
 
             String choice = scanner.nextLine();
@@ -52,7 +54,8 @@ public class MenuTeller {
                 case "4": ListeclientAccounts(); break;
                 case "5": deposit(); break;
                 case "6": withdraw(); break;
-                case "7": logout(); return;
+                case "7": transfer(); break;
+                case "8": logout(); return;
                 default: System.out.println("Choix invalide");
             }
         }
@@ -216,4 +219,21 @@ public class MenuTeller {
             System.out.println(" Erreur : " + e.getMessage());
         }
     }
+
+    private void transfer(){
+        System.out.println("--- TRANSFER ---");
+        try{
+            System.out.print("Numero de compte Out : ");
+            String accountNumberOut = scanner.nextLine();
+            System.out.print("Numero de compte In : ");
+            String accountNumberIn = scanner.nextLine();
+            System.out.print("Montant a Transfer : ");
+            BigDecimal amount = new BigDecimal(scanner.nextLine());
+            transactionController.transfer(accountNumberOut,accountNumberIn,amount);
+            System.out.println(" Transfer réussi !");
+        }catch (Exception e) {
+            System.out.println(" Erreur : " + e.getMessage());
+        }
+    }
 }
+
