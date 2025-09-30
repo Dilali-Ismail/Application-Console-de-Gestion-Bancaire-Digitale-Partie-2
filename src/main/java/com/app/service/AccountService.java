@@ -9,6 +9,7 @@ import main.java.com.app.repository.interfaces.AccountRepository;
 import java.math.BigDecimal;
 import java.time.Year;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class AccountService {
 
@@ -90,8 +91,9 @@ public class AccountService {
     }
 
     private String generateAccountNumber() {
+
         String year = String.valueOf(Year.now().getValue());
-        String sequence = String.format("%04d", accountCounter++);
+        int sequence = ThreadLocalRandom.current().nextInt(1000, 9999);;
         return "BK-" + year + "-" + sequence;
     }
 

@@ -98,6 +98,26 @@ public class AccountRepositoryImpl implements AccountRepository {
         return false;
     }
 
+    public Account update(Account account){
+        String sql = "UPDATE accounts SET balance = ? WHERE id = ?";
+        try {
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql) ;
+            stmt.setBigDecimal(1, account.getBalance());
+            stmt.setLong(2, account.getId());
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                return account;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erreur mise à jour compte : " + e.getMessage());
+        }
+        return null;
+
+    }
+
     private Account mapResultSetToAccount(ResultSet rs) throws SQLException {
         Account account = new Account();
         account.setId(rs.getLong("id"));

@@ -30,7 +30,15 @@ CREATE TABLE IF NOT EXISTS accounts (
     closed_date DATE NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-
+CREATE TABLE IF NOT EXISTS transactions (
+    id SERIAL PRIMARY KEY,
+    account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+    transaction_type VARCHAR(20) NOT NULL CHECK (transaction_type IN ('DEPOSIT', 'WITHDRAWAL', 'TRANSFER' )),
+    amount DECIMAL(15,2) NOT NULL,
+    status VARCHAR(20)  CHECK (status IN ('COMPLETED', 'FAILED', 'PENDING')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+CREATE INDEX IF NOT EXISTS idx_transactions_account_id ON transactions(account_id);
 
 INSERT INTO users (username, password, role)
 VALUES

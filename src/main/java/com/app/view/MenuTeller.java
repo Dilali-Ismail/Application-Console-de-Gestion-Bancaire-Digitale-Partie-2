@@ -3,6 +3,7 @@ package main.java.com.app.view;
 import main.java.com.app.controller.AccountController;
 import main.java.com.app.controller.AuthController;
 import main.java.com.app.controller.ClientController;
+import main.java.com.app.controller.TransactionController;
 import main.java.com.app.models.Account;
 import main.java.com.app.models.Client;
 import main.java.com.app.models.enums.AccountType;
@@ -15,12 +16,14 @@ public class MenuTeller {
     private AuthController authController;
     private ClientController clientController;
     private AccountController accountController;
+    private TransactionController transactionController;
     private Scanner scanner;
 
-    public MenuTeller(AuthController authController, ClientController clientController , AccountController accountController ) {
+    public MenuTeller(AuthController authController, ClientController clientController , AccountController accountController, TransactionController transactionController) {
         this.authController = authController;
         this.clientController = clientController;
         this.accountController = accountController;
+        this.transactionController = transactionController;
         this.scanner = new Scanner(System.in);
 
     }
@@ -34,7 +37,9 @@ public class MenuTeller {
             System.out.println("=== GESTION DES COMPTES ===");
             System.out.println("3 - Creer un compte");
             System.out.println("4 - Lister les aacounts d'un Client");
-            System.out.println("5. Déconnexion");
+            System.out.println("===== transaction ====");
+            System.out.println("5. Dépôt");
+            System.out.println("6. Déconnexion");
             System.out.print("Choix : ");
 
             String choice = scanner.nextLine();
@@ -44,7 +49,8 @@ public class MenuTeller {
                 case "2": listClients(); break;
                 case "3" : creerAccount();break;
                 case "4": ListeclientAccounts(); break;
-                case "5": logout(); return;
+                case "5": deposit(); break;
+                case "6": logout(); return;
                 default: System.out.println("Choix invalide");
             }
         }
@@ -175,4 +181,20 @@ public class MenuTeller {
         }
     }
 
+    private void deposit(){
+            System.out.println("--- DEPOT ---");
+            try {
+                System.out.print("Numero de compte : ");
+                String accountNumber = scanner.nextLine();
+                System.out.print("Montant a déposer : ");
+                BigDecimal amount = new BigDecimal(scanner.nextLine());
+                transactionController.deposit(accountNumber, amount);
+                BigDecimal newBalance = transactionController.getAccountBalance(accountNumber);
+                System.out.println(" Dépôt réussi !");
+                System.out.println("Nouveau solde : " + newBalance + " MAD");
+
+            }  catch (Exception e) {
+                System.out.println(" Erreur : " + e.getMessage());
+            }
+        }
 }

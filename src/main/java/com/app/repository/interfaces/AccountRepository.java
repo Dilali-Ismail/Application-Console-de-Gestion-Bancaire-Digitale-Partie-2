@@ -10,6 +10,7 @@ public interface AccountRepository {
     Account save(Account account);
     List<Account> findByClientId(Long clientId);
     Optional<Account> findByAccountNumber(String accountNumber);
+    Account update(Account account);
     boolean accountNumberExists(String accountNumber);
 
 }
