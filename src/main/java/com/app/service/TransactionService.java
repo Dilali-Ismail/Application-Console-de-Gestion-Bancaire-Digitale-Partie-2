@@ -2,6 +2,7 @@ package main.java.com.app.service;
 
 import main.java.com.app.models.Account;
 import main.java.com.app.models.Transaction;
+import main.java.com.app.models.enums.AccountType;
 import main.java.com.app.models.enums.TransactionType;
 import main.java.com.app.repository.impl.AccountRepositoryImpl;
 import main.java.com.app.repository.impl.TransactionRepositoryImpl;
@@ -23,53 +24,65 @@ public class TransactionService {
 
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new RuntimeException("Compte non trouvé : " + accountNumber));
-       if(account.getAccountType().equals())
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Le montant doit être positif");
-        }
-        System.out.println(account.getBalance());
-        BigDecimal newBalance = account.getBalance().add(amount);
-        account.setBalance(newBalance);
+       if( account.getAccountType().equals(AccountType.CHECKING)){
+           if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+               throw new IllegalArgumentException("Le montant doit être positif");
+           }
+           System.out.println(account.getBalance());
+           BigDecimal newBalance = account.getBalance().add(amount);
+           account.setBalance(newBalance);
 
-        System.out.println(newBalance);
+           System.out.println(newBalance);
 
-        Account updatedAccount = accountRepository.update(account);
-        if (updatedAccount == null) {
-            throw new RuntimeException("Erreur mise à jour du solde");
-        }
-        Transaction transaction = new Transaction(account.getId(), TransactionType.DEPOSIT, amount);
-        Transaction savedTransaction = transactionRepository.save(transaction);
-        if (savedTransaction == null) {
-            throw new RuntimeException("Erreur création de la transaction");
-        }
-        return savedTransaction;
+           Account updatedAccount = accountRepository.update(account);
+           if (updatedAccount == null) {
+               throw new RuntimeException("Erreur mise à jour du solde");
+           }
+           Transaction transaction = new Transaction(account.getId(), TransactionType.DEPOSIT, amount);
+           Transaction savedTransaction = transactionRepository.save(transaction);
+           if (savedTransaction == null) {
+               throw new RuntimeException("Erreur création de la transaction");
+           }
+           return savedTransaction;
+       } else{
+           System.out.println("Dépôt non autorisé sur un compte de type CREDIT ou SAVINGS");
+           return null;
+       }
+
     }
 
     public Transaction withdraw(String accountnumber ,BigDecimal amount) {
         Account account = accountRepository.findByAccountNumber(accountnumber)
                 .orElseThrow(() -> new RuntimeException("Compte non trouvé : " + accountnumber));
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Erreur mise à jour du solde");
-        }
-        Transaction savedTransaction = null;
-        if (account.getBalance().compareTo(amount) > 0) {
-            BigDecimal newbalaance = account.getBalance().subtract(amount);
-            account.setBalance(newbalaance);
-            Account updatedAccount = accountRepository.update(account);
-            if (updatedAccount == null) {
+        if(account.getAccountType().equals(AccountType.CHECKING)){
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new RuntimeException("Erreur mise à jour du solde");
             }
-            Transaction transaction = new Transaction(account.getId(), TransactionType.WITHDRAWAL, amount);
-            savedTransaction = transactionRepository.save(transaction);
-            if (savedTransaction == null) {
-                throw new RuntimeException("Erreur création de la transaction");
-            }
+            Transaction savedTransaction = null;
+            if (account.getBalance().compareTo(amount) > 0) {
+                BigDecimal newbalaance = account.getBalance().subtract(amount);
+                account.setBalance(newbalaance);
+                Account updatedAccount = accountRepository.update(account);
+                if (updatedAccount == null) {
+                    throw new RuntimeException("Erreur mise à jour du solde");
+                }
+                Transaction transaction = new Transaction(account.getId(), TransactionType.WITHDRAWAL, amount);
+                savedTransaction = transactionRepository.save(transaction);
+                if (savedTransaction == null) {
+                    throw new RuntimeException("Erreur création de la transaction");
+                }
 
-           }
-        return savedTransaction;
+            }
+            return savedTransaction;
+        }else{
+            System.out.println("Retrait non autorisé sur un compte de type CREDIT ou SAVINGS");
+            return null;
+        }
+
     }
 
     public void transfer(String accounnumberOut , String accountnumberIn , BigDecimal amount){
+
         Account accountOut = accountRepository.findByAccountNumber(accounnumberOut)
                 .orElseThrow(() -> new RuntimeException("Compte non trouvé : " + accounnumberOut));
         Account accountIn = accountRepository.findByAccountNumber(accountnumberIn)
@@ -80,9 +93,20 @@ public class TransactionService {
         if(accountOut.getBalance().compareTo(amount) < 0){
             throw new RuntimeException("Solde insuffisant pour le transfert");
         }
-
+        if(accountOut.getAccountType().equals(AccountType.SAVINGS)){
+            if(!accountOut.getClientId().equals(accountIn.getClientId())){
+               System.out.println("Transfert non autorisé entre comptes épargne de clients différents");
+                return;
+            }
+        }
+        if(accountOut.getAccountType().equals(AccountType.CREDIT)){
+            System.out.println("Transfert non autorisé depuis un compte de type CREDIT");
+            return;
+        }
         accountOut.setBalance(accountOut.getBalance().subtract(amount));
-        accountIn.setBalance(accountIn.getBalance().subtract(amount));
+        accountIn.setBalance(accountIn.getBalance().subtract(amount))
+
+       ;
         //update
         Account updatedAccountOut = accountRepository.update(accountOut);
         Account updatedAccountIn = accountRepository.update(accountIn);
