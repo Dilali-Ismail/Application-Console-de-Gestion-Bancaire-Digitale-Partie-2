@@ -104,7 +104,7 @@ public class TransactionService {
             return;
         }
         accountOut.setBalance(accountOut.getBalance().subtract(amount));
-        accountIn.setBalance(accountIn.getBalance().subtract(amount))
+        accountIn.setBalance(accountIn.getBalance().add(amount))
 
        ;
         //update

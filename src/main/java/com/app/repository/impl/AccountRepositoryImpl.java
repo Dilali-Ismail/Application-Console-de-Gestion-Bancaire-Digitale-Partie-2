@@ -2,6 +2,7 @@ package main.java.com.app.repository.impl;
 
 import main.java.com.app.config.DatabaseConnection;
 import main.java.com.app.models.Account;
+import main.java.com.app.models.AccountExterne;
 import main.java.com.app.models.enums.AccountType;
 import main.java.com.app.repository.interfaces.AccountRepository;
 
@@ -117,7 +118,6 @@ public class AccountRepositoryImpl implements AccountRepository {
         return null;
 
     }
-
     private Account mapResultSetToAccount(ResultSet rs) throws SQLException {
         Account account = new Account();
         account.setId(rs.getLong("id"));

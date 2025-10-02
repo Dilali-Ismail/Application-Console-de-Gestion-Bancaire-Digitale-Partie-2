@@ -42,7 +42,8 @@ public class MenuTeller {
             System.out.println("5. Dépôt");
             System.out.println("6. Withdraw");
             System.out.println("7. transfer");
-            System.out.println("8. Déconnexion");
+            System.out.println("8. transfer extern");
+            System.out.println("9. Déconnexion");
             System.out.print("Choix : ");
 
             String choice = scanner.nextLine();
@@ -55,7 +56,8 @@ public class MenuTeller {
                 case "5": deposit(); break;
                 case "6": withdraw(); break;
                 case "7": transfer(); break;
-                case "8": logout(); return;
+                case "8" : transferExtern();break;
+                case "9": logout(); return;
                 default: System.out.println("Choix invalide");
             }
         }
@@ -232,6 +234,22 @@ public class MenuTeller {
             transactionController.transfer(accountNumberOut,accountNumberIn,amount);
             System.out.println(" Transfer réussi !");
         }catch (Exception e) {
+            System.out.println(" Erreur : " + e.getMessage());
+        }
+    }
+
+    private void transferExtern(){
+        System.out.println("--- TRANSFER Extern ---");
+        try {
+            System.out.print("Numero de compte Out : ");
+            String accountNumberOut = scanner.nextLine();
+            System.out.print("Numero de compte extern In : ");
+            String accountNumberIn = scanner.nextLine();
+            System.out.print("Montant a Transfer : ");
+            BigDecimal amount = new BigDecimal(scanner.nextLine());
+            transactionController.transferExtern(accountNumberOut, accountNumberIn, amount);
+            System.out.println(" Transfer réussi !");
+        }catch(Exception e) {
             System.out.println(" Erreur : " + e.getMessage());
         }
     }

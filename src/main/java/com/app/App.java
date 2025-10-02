@@ -3,12 +3,9 @@ package main.java.com.app;
 import main.java.com.app.config.DatabaseConnection;
 import main.java.com.app.controller.AccountController;
 import main.java.com.app.controller.TransactionController;
-import main.java.com.app.service.AccountService;
-import main.java.com.app.service.AuthService;
-import main.java.com.app.service.ClientService;
+import main.java.com.app.service.*;
 import main.java.com.app.controller.AuthController;
 import main.java.com.app.controller.ClientController;
-import main.java.com.app.service.TransactionService;
 import main.java.com.app.view.MenuTeller;
 
 import java.util.Scanner;
@@ -24,7 +21,8 @@ public class App {
         AccountService accountService =  new AccountService();
         AccountController accountController = new AccountController(accountService,authController);
         TransactionService transactionService = new TransactionService();
-        TransactionController transactionController = new TransactionController(transactionService);
+        ExternalTransferService externalTransferService = new ExternalTransferService();
+        TransactionController transactionController = new TransactionController(transactionService , externalTransferService);
 
         Scanner scanner = new Scanner(System.in);
 
