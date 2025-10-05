@@ -125,6 +125,7 @@ public class ExternalTransferService {
         }
     }
 
+
     private BigDecimal calculeFrais(FeeRule feeRule, BigDecimal amount) {
         if (FeeMode.FIXED.equals(feeRule.getFeeMode())) {
             return feeRule.getFeeValue();

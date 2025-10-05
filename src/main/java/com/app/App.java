@@ -1,11 +1,8 @@
 package main.java.com.app;
 
 import main.java.com.app.config.DatabaseConnection;
-import main.java.com.app.controller.AccountController;
-import main.java.com.app.controller.TransactionController;
+import main.java.com.app.controller.*;
 import main.java.com.app.service.*;
-import main.java.com.app.controller.AuthController;
-import main.java.com.app.controller.ClientController;
 import main.java.com.app.view.MenuTeller;
 
 import java.util.Scanner;
@@ -23,6 +20,8 @@ public class App {
         TransactionService transactionService = new TransactionService();
         ExternalTransferService externalTransferService = new ExternalTransferService();
         TransactionController transactionController = new TransactionController(transactionService , externalTransferService);
+        CreditService creditService = new CreditService();
+        CreditController creditController = new CreditController(creditService);
 
         Scanner scanner = new Scanner(System.in);
 
@@ -36,7 +35,7 @@ public class App {
 
                 switch (choice) {
                     case "1":
-                        login(authController, clientController, scanner ,accountController,transactionController);
+                        login(authController, clientController, scanner ,accountController,transactionController , creditController);
                         break;
                     case "2":
                         System.out.println("Au revoir !");
@@ -52,7 +51,7 @@ public class App {
         }
     }
 
-    private static void login(AuthController authController, ClientController clientController, Scanner scanner , AccountController accountcontroller,TransactionController transactionController) {
+    private static void login(AuthController authController, ClientController clientController, Scanner scanner , AccountController accountcontroller,TransactionController transactionController,CreditController creditController) {
         try {
             System.out.print("Username : ");
             String username = scanner.nextLine();
@@ -65,7 +64,7 @@ public class App {
 
                 switch (authController.getCurrentUser().getRole()) {
                     case TELLER:
-                        new MenuTeller(authController, clientController,accountcontroller,transactionController).displayMenu();
+                        new MenuTeller(authController, clientController,accountcontroller,transactionController, creditController).displayMenu();
                         break;
                     default:
                         System.out.println("Menu pour " + authController.getCurrentUser().getRole() + " bientôt disponible");

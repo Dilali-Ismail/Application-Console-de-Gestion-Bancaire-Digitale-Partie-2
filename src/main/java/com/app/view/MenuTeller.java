@@ -1,11 +1,9 @@
 package main.java.com.app.view;
 
-import main.java.com.app.controller.AccountController;
-import main.java.com.app.controller.AuthController;
-import main.java.com.app.controller.ClientController;
-import main.java.com.app.controller.TransactionController;
+import main.java.com.app.controller.*;
 import main.java.com.app.models.Account;
 import main.java.com.app.models.Client;
+import main.java.com.app.models.Credit;
 import main.java.com.app.models.enums.AccountType;
 
 import java.math.BigDecimal;
@@ -18,13 +16,15 @@ public class MenuTeller {
     private ClientController clientController;
     private AccountController accountController;
     private TransactionController transactionController;
+    public  CreditController CreditController ;
     private Scanner scanner;
 
-    public MenuTeller(AuthController authController, ClientController clientController , AccountController accountController, TransactionController transactionController) {
+    public MenuTeller(AuthController authController, ClientController clientController , AccountController accountController, TransactionController transactionController , CreditController CreditController ) {
         this.authController = authController;
         this.clientController = clientController;
         this.accountController = accountController;
         this.transactionController = transactionController;
+        this.CreditController = CreditController;
         this.scanner = new Scanner(System.in);
 
     }
@@ -43,7 +43,9 @@ public class MenuTeller {
             System.out.println("6. Withdraw");
             System.out.println("7. transfer");
             System.out.println("8. transfer extern");
-            System.out.println("9. Déconnexion");
+            System.out.println("===== CREDITS =====");
+            System.out.println("9. demander un credit ");
+            System.out.println("10. Déconnexion");
             System.out.print("Choix : ");
 
             String choice = scanner.nextLine();
@@ -57,7 +59,8 @@ public class MenuTeller {
                 case "6": withdraw(); break;
                 case "7": transfer(); break;
                 case "8" : transferExtern();break;
-                case "9": logout(); return;
+                case "9" : demanderCredit(); break;
+                case "10": logout(); return;
                 default: System.out.println("Choix invalide");
             }
         }
@@ -253,5 +256,37 @@ public class MenuTeller {
             System.out.println(" Erreur : " + e.getMessage());
         }
     }
+
+    private void demanderCredit() {
+        System.out.println("--- DEMANDE DE CRÉDIT ---");
+        try {
+            System.out.print("ID du client : ");
+            Long clientId = Long.parseLong(scanner.nextLine());
+
+            System.out.print("Montant du crédit : ");
+            BigDecimal amount = new BigDecimal(scanner.nextLine());
+
+            System.out.print("Durée  : ");
+            int duration = Integer.parseInt(scanner.nextLine());
+
+            System.out.print(" Salaire : ");
+            BigDecimal Salaire = new BigDecimal(scanner.nextLine());
+
+           Credit credit = CreditController.demanderCredit(clientId, amount, duration,Salaire);
+
+            System.out.println("✅ Demande de crédit créée avec succès !");
+            System.out.println("📋 Détails du crédit:");
+            System.out.println("   - ID: " + credit.getId());
+            System.out.println("   - Montant: " + credit.getAmount() + " MAD");
+            System.out.println("   - Durée: " + credit.getDuration() + " mois");
+            System.out.println("   - Mensualité: " + credit.getMonthlyPayment() + " MAD");
+            System.out.println("   - Statut: " + credit.getStatus());
+            System.out.println("⏳ En attente de validation par le manager...");
+
+        } catch (Exception e) {
+            System.out.println(" Erreur: " + e.getMessage());
+        }
+    }
 }
+
 

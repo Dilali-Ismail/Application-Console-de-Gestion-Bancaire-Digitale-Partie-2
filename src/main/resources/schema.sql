@@ -68,6 +68,18 @@ CREATE TABLE IF NOT EXISTS accounts_externe (
     holder_name VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+CREATE TABLE IF NOT EXISTS credits (
+    id SERIAL PRIMARY KEY,
+    amount DECIMAL(15,2),
+    duration INTEGER,
+    monthly_payment DECIMAL(15,2),
+    status VARCHAR(20),
+    remaining_amount DECIMAL(15,2),
+    client_id BIGINT REFERENCES clients(id),
+    request_date DATE,
+    client_income DECIMAL(15,2)
+);
+
 ALTER TABLE accounts_externe ADD CONSTRAINT accounts_externe_account_number_key UNIQUE (account_number);
 INSERT INTO accounts_externe (account_number, balance, bank_name, holder_name) VALUES
 ('BMCE-1234', 200.30, 'BMCE', 'Ahmed Alami'),
